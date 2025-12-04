@@ -50,19 +50,22 @@ def read_sflight(cityfr, cityto, date_sflight) ->list:
         sflight_data = conn.execute(stmt)
         return sflight_data
     
-def update_sflight(userid, carrid, connid, fldate, seatocc):
+def update_sflight(userid, carrid, connid, fldate, seatocc) ->bool:
     with engine.connect() as conn:
-        # update sbook
-        conn.execute(insert(sbook_table).values(carrid=carrid, 
+        try:
+            # update sbook
+            conn.execute(insert(sbook_table).values(carrid=carrid, 
                                                 connid=connid, 
                                                 fldate=fldate,
                                                 userid=userid))
-        # update sflight
-        conn.execute(update(sfight_table).values(seatocc=seatocc)
+            # update sflight
+            conn.execute(update(sfight_table).values(seatocc=seatocc)
                         .where( sfight_table.c.carrid == carrid, 
                                 sfight_table.c.connid == connid, 
                                 sfight_table.c.fldate == fldate))
-        conn.commit() 
+            conn.commit() 
+        except Exception as e:
+            conn.rollback()
                                                 
 
 

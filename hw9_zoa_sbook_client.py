@@ -104,10 +104,10 @@ if sflight_connid_seats > 0:
         seatfree = int(hw9_zoa_redis.getvar(sflight_connid))
         seatocc = sflight_seatmax - seatfree
         # update DB
-        try:
-            hw9_zoa_sbook_db.update_sflight(userid, sflight_carrid, sflight_connid, date_sflight, seatocc)
+        if hw9_zoa_sbook_db.update_sflight(userid, sflight_carrid, sflight_connid, date_sflight, seatocc):
             print('Обновление БД Redis & PostgreSQL выполнено успешно!')
-        except Exception as e:  
-            print(f'Ошибка обновления БД: {e}') 
+        else:
+            hw9_zoa_redis.incrvar(sflight_connid, sflight_connid_seats)
+            print('Ошибка обновления БД PostgreSQL!') 
     else:
         print('Ошибка обновления БД Redis!')

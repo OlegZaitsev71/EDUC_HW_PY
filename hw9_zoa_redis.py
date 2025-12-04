@@ -22,6 +22,14 @@ def decrvar(variable_name, num) ->bool:
     else:
         return False
 
+def incrvar(variable_name, num) ->bool:
+    if isinstance(num, int):
+        my_server = redis.Redis(connection_pool=POOL)
+        my_server.incr(variable_name, num)
+        return True
+    else:
+        return False
+
 # test
 #setvar('zoa_key1', 'zoa_key1_val')
 #print(getvar('zoa_key1'))
