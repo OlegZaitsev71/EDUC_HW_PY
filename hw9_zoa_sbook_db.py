@@ -64,8 +64,10 @@ def update_sflight(userid, carrid, connid, fldate, seatocc) ->bool:
                                 sfight_table.c.connid == connid, 
                                 sfight_table.c.fldate == fldate))
             conn.commit() 
+            return True
         except Exception as e:
             conn.rollback()
+            return False
                                                 
 
 
