@@ -25,7 +25,7 @@ userid = int(input('Введите ID пользователя для брони
 username = check_userid(userid)
 if username is None:
     print(f'Пользователь {userid} не авторизирован!')
-    pass
+    sys.exit()
 
 print(f'Добрый день, {username}!')
 
@@ -72,7 +72,9 @@ for row in sflight_data:
     # Добавление ключа <Номер рейса> : <Кол-во свободных мест> в DB Redis
     if isinstance(row[4], int) and isinstance(row[5], int):
         seatfree = row[4] - row[5]
-        hw9_zoa_redis.setvar(str(row[1]), str(seatfree) )
+        # Установить ключ в БД Redis, если он не установлен кем-то другим в параллельной сессии
+        if hw9_zoa_redis.getvar(str(row[1])) is None:
+            hw9_zoa_redis.setvar(str(row[1]), str(seatfree) )
     sflight_data_list.append(tuple(row))
 
 my_cmd = input('Начать бронирование[Y,N]:')
@@ -99,7 +101,12 @@ for row in sflight_data_list:
 # в БД PostgreSQL сделал поле sbook-bookid как счетчик: nextval('table_id_seq'::regclass)
 sflight_connid_seats = int(input('Укажите число мест, рейс {sflight_connid}:'))
 if sflight_connid_seats > 0:
-    # update Redis
+    # Проверка на овербукинг
+    seatfree = int(hw9_zoa_redis.getvar(sflight_connid))
+    if seatfree < sflight_connid_seats:
+        print(f'Овербукинг: номер рейса {sflight_connid}, доступных мест {seatfree} ')
+        sys.exit()
+    # Update Redis
     if hw9_zoa_redis.decrvar(sflight_connid, sflight_connid_seats):
         seatfree = int(hw9_zoa_redis.getvar(sflight_connid))
         seatocc = sflight_seatmax - seatfree

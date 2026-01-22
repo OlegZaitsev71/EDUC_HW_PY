@@ -33,18 +33,11 @@ with engine.begin() as conn:
 
 scarr_table = Table('scarr', metadata, autoload=True)
 with engine.begin() as conn:
-    for j in range(1,6):
-        match j:
-            case 1:
-                conn.execute(insert(scarr_table).values(carrid=j, carname='AEROFLOT'))
-            case 2:
-                conn.execute(insert(scarr_table).values(carrid=j, carname='AIR CHINA'))
-            case 3:
-                conn.execute(insert(scarr_table).values(carrid=j, carname='TURKISH AIRLINES'))
-            case 4:
-                conn.execute(insert(scarr_table).values(carrid=j, carname='QATAR AIRLINES'))
-            case 5:
-                conn.execute(insert(scarr_table).values(carrid=j, carname='PAN AMERICAN'))
+    conn.execute(insert(scarr_table).values(carrid=1, carname='AEROFLOT'))
+    conn.execute(insert(scarr_table).values(carrid=2, carname='AIR CHINA'))
+    conn.execute(insert(scarr_table).values(carrid=3, carname='TURKISH AIRLINES'))
+    conn.execute(insert(scarr_table).values(carrid=4, carname='QATAR AIRLINES'))
+    conn.execute(insert(scarr_table).values(carrid=5, carname='PAN AMERICAN'))
 
 # spfli
 spfli_table = Table('spfli', metadata, autoload=True)
