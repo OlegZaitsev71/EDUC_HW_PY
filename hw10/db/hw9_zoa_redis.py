@@ -1,0 +1,47 @@
+"""ДЗ по теме SQLAlchemy."""
+# Подключение к резидентной БД Redis из Python
+
+import redis
+
+POOL = redis.ConnectionPool(host='127.0.0.1', port=6379, db=0)
+r_server = None  # глобальная переменная
+
+def init_r_server():
+    global r_server
+    if r_server is None:
+        r_server = redis.Redis(connection_pool=POOL)
+    
+    return r_server
+
+def getvar(variable_name):
+    # my_server = redis.Redis(connection_pool=POOL)
+    r_server = init_r_server()
+    response = r_server.get(variable_name)
+    return response
+
+def setvar(variable_name, variable_value):
+    #cmy_server = redis.Redis(connection_pool=POOL)
+    r_server = init_r_server()
+    r_server.set(variable_name, variable_value)
+
+def decrvar(variable_name, num) ->bool:
+    if isinstance(num, int):
+        # my_server = redis.Redis(connection_pool=POOL)
+        r_server = init_r_server()
+        r_server.decr(variable_name, num)
+        return True
+    else:
+        return False
+
+def incrvar(variable_name, num) ->bool:
+    if isinstance(num, int):
+        # my_server = redis.Redis(connection_pool=POOL)
+        r_server = init_r_server()
+        r_server.incr(variable_name, num)
+        return True
+    else:
+        return False
+
+# test
+#setvar('zoa_key1', 'zoa_key1_val')
+#print(getvar('zoa_key1'))
